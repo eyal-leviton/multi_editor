@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+	<style>
+		.noblock {
+			display:inline;
+		}
+		
+		.blinking-cursor {
+			border: 1px solid blue;
+			display:inline;
+		}
+	</style>
+	<script>
+		function onLoad() {
+			keyCodes = {
+				BACK_SPACE:8,
+				SPACE:32,
+				ENTER:13,
+				LEFT:37,
+				RIGHT:39,
+				UP:38,
+				DOWN:40,
+				END:35,
+				HOME:36
+			};
+
+			document.getElementById("cursor").style = "border-color:blue";
+			document.onkeypress = keyDownTextField;
+			document.onkeydown = specialEvents;
+		}
+
+		//checks for readable keys
+		function keyDownTextField(evt) {
+			if (evt) {
+				var content = document.getElementById('content');
+				var myCursor = '<div id="cursor" class="blinking-cursor" style="border-color: blue;"></div>'
+				var i = content.innerHTML.indexOf(myCursor)
+
+				var charCode = (evt.charCode) ? evt.charCode : evt.keyCode;
+				key = String.fromCharCode(charCode);
+				if (charCode == keyCodes['ENTER']) {
+					content.innerHTML = content.innerHTML.insretToString(i, '<br>');
+				} else if (charCode == keyCodes['SPACE']) {
+					content.innerHTML = content.innerHTML.insretToString(i, '&nbsp;');
+				} else {
+					content.innerHTML = content.innerHTML.insretToString(i, key)
+				}
+			}
+		}
+
+		//checks for spacial keys
+		function specialEvents(evt) {
+			if (evt) {
+				var content = document.getElementById('content');
+				var myCursor = '<div id="cursor" class="blinking-cursor" style="border-color: blue;"></div>'
+				var i = content.innerHTML.indexOf(myCursor)
+
+				if (evt.keyCode == keyCodes['BACK_SPACE']) {
+					content.innerHTML = content.innerHTML.backSpace(i, check_special_string(content));
+				} else if(evt.keyCode == keyCodes['LEFT']) {
+					length = check_special_string(head);
+					tail.innerHTML = head.innerHTML.slice(-1*length) + tail.innerHTML;
+					backSpace(head, length);
+				} else if(evt.keyCode == keyCodes['RIGHT']) {
+					length = check_special_string(tail, false);
+					head.innerHTML += tail.innerHTML.slice(0, length);
+					tail.innerHTML = tail.innerHTML.substring(
+							length,
+							tail.innerHTML.length
+						);
+				}
+				else if(evt.keyCode == keyCodes['END']) {
+					loc = tail.innerHTML.indexOf('<br>');
+					if (loc == -1) {
+						head.innerHTML += tail.innerHTML;
+						tail.innerHTML = '';
+					} else {
+						head.innerHTML += tail.innerHTML.slice(0, loc);
+						tail.innerHTML = tail.innerHTML.substring(
+							loc,
+							tail.innerHTML.length
+						);
+					}
+				} else if(evt.keyCode == keyCodes['HOME']) {
+					loc = head.innerHTML.lastIndexOf('<br>');
+					if (loc == -1) {
+						tail.innerHTML = head.innerHTML + tail.innerHTML;
+						head.innerHTML = '';
+					} else {
+						loc = head.innerHTML.length - loc - '<br>'.length;
+						if (loc != 0){
+							tail.innerHTML = head.innerHTML.slice(-1*loc) + tail.innerHTML;
+							backSpace(head, loc);
+						}
+					}
+				}
+			}
+		}
+
+		//checks if innerHTML ends with something if end = true
+		//checks if innerHTML starts with something if end = false
+		function check_special_string(div, end = true) {
+			if (end) {
+				if (div.innerHTML.endsWith('&nbsp;')) {
+					length = '&nbsp;'.length;
+				} else if (div.innerHTML.endsWith('&amp;')) {
+					length = '&amp;'.length;
+				} else if (div.innerHTML.endsWith('<br>')) {
+					length = '<br>'.length;
+				} else {
+					length = 1;
+				}
+			} else {
+				if (div.innerHTML.substring(0, '&nbsp;'.length) == '&nbsp;') {
+					length = '&nbsp;'.length;
+				} else if (div.innerHTML.substring(0, '&amp;'.length) == '&amp;') {
+					length = '&amp;'.length;
+				} else if (div.innerHTML.substring(0, '<br>'.length) == '<br>') {
+					length = '<br>'.length;
+				} else {
+					length = 1;
+				}
+			}
+
+			return length;
+		}
+
+		String.prototype.insretToString = function(idx, str) {
+			return this.slice(0, idx) + str + this.slice(idx);
+		};
+
+		String.prototype.backSpace = function(idx, length) {
+			return this.slice(0, idx - length) + this.slice(idx);
+		};
+	</script>
+	<body onload='onLoad()'>
+		<div id='content' class='noblock'><div id='cursor' class='blinking-cursor'></div></div>
+	</body>
+</html>
