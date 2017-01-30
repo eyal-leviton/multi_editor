@@ -11,7 +11,6 @@
 		}
 	</style>
 	<script>
-		var content;
 		function onLoad() {
 			keyCodes = {
 				BACK_SPACE:8,
@@ -26,7 +25,6 @@
 			};
 
 			var cursor = new Cursor('blue');
-			console.log(cursor.getCursorDiv);
 			content = new FileContent(cursor);
 			document.onkeypress = keyDownTextField;
 			document.onkeydown = specialEvents;
@@ -84,7 +82,7 @@
 		*/
 		class FileContent {
 			constructor(cursor) {
-				this.conent = '' + cursor.getCursorDiv;
+				this.content = '' + cursor.getCursorDiv;
 				this.corsur = cursor;
 			}
 
@@ -92,14 +90,16 @@
 				return this.content;
 			}
 
-			add(key) {
-				this.content += key;
+			addKey(key) {
+				var i = this.content.indexOf(this.corsur.getCursorDiv);
+				this.content = this.content.slice(0, i) + key + this.content.slice(i);
 			}
 			
 			backspace() {
-				var i = this.content.indexOf(myCursor);
+				console.log('reached')
+				var i = this.content.indexOf(this.corsur.getCursorDiv);
 				var length = check_special_string(this.content.slice(0, i))
-				this.content.slice(0, i - length) + this.content.slice(i);
+				this.content = this.content.slice(0, i - length) + this.content.slice(i);
 			}
 			
 			//checks if innerHTML ends with something if end = true
@@ -131,33 +131,30 @@
 
 		//checks for readable keys
 		function keyDownTextField(evt) {
-			console.log(window.content.getContent);
 			if (evt) {
-				/*
-				var myCursor = '<div id="cursor" class="blinking-cursor" style="border-color: blue;"></div>'
-				var i = content.innerHTML.indexOf(myCursor)
-
 				var charCode = (evt.charCode) ? evt.charCode : evt.keyCode;
 				key = String.fromCharCode(charCode);
 				if (charCode == keyCodes['ENTER']) {
-					content.innerHTML = content.innerHTML.insretToString(i, '<br>');
+					content.addKey('<br>');
 				} else if (charCode == keyCodes['SPACE']) {
-					content.innerHTML = content.innerHTML.insretToString(i, '&nbsp;');
+					content.addKey('&nbsp;');
 				} else {
-					content.innerHTML = content.innerHTML.insretToString(i, key);
-				}*/
+					content.addKey(key);
+				}
 			}
+
+			document.getElementById('content').innerHTML = content.getContent;
 		}
 
 		//checks for spacial keys
-		function specialEvents(content, evt) {
+		function specialEvents(evt) {
 			if (evt) {
-				var content = document.getElementById('content');
+				/*var content = document.getElementById('content');
 				var myCursor = '<div id="cursor" class="blinking-cursor" style="border-color: blue;"></div>'
-				var i = content.innerHTML.indexOf(myCursor)
+				var i = content.innerHTML.indexOf(myCursor)*/
 
 				if (evt.keyCode == keyCodes['BACK_SPACE']) {
-					content.innerHTML = content.innerHTML.backSpace(i, check_special_string(content));
+					content.backspace;
 				} else if(evt.keyCode == keyCodes['LEFT']) {
 					length = check_special_string(head);
 					tail.innerHTML = head.innerHTML.slice(-1*length) + tail.innerHTML;
@@ -196,6 +193,8 @@
 					}
 				}
 			}
+
+			document.getElementById('content').innerHTML = content.getContent;
 		}
 	</script>
 	<body onload='onLoad()'>
