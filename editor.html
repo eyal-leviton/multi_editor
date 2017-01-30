@@ -83,7 +83,7 @@
 		class FileContent {
 			constructor(cursor) {
 				this.content = '' + cursor.getCursorDiv;
-				this.corsur = cursor;
+				this.cursor = cursor;
 			}
 
 			get getContent() {
@@ -91,15 +91,23 @@
 			}
 
 			addKey(key) {
-				var i = this.content.indexOf(this.corsur.getCursorDiv);
+				var i = this.content.indexOf(this.cursor.getCursorDiv);
 				this.content = this.content.slice(0, i) + key + this.content.slice(i);
 			}
 			
 			backspace() {
-				console.log('reached')
-				var i = this.content.indexOf(this.corsur.getCursorDiv);
-				var length = check_special_string(this.content.slice(0, i))
+				var i = this.content.indexOf(this.cursor.getCursorDiv);
+				var length = this.check_special_string(this.content.slice(0, i));
 				this.content = this.content.slice(0, i - length) + this.content.slice(i);
+			}
+			
+			leftPress() {
+				var i = this.content.indexOf(this.cursor.getCursorDiv);
+				var length = this.check_special_string(this.content.slice(0, i));
+				var tempStr = this.content.slice(i - length ,i);
+				console.log(tempStr);
+				this.content = this.pushStr(tempStr, i + this.cursor.len);
+				this.backspace();
 			}
 			
 			//checks if innerHTML ends with something if end = true
@@ -112,6 +120,8 @@
 						length = '&amp;'.length;
 					} else if (content.endsWith('<br>')) {
 						length = '<br>'.length;
+					} else if (content.length == 0){
+						length = 0;
 					} else {
 						length = 1;
 					}
@@ -122,15 +132,24 @@
 						length = '&amp;'.length;
 					} else if (content.substring(0, '<br>'.length) == '<br>') {
 						length = '<br>'.length;
+					} else if (content.length == 0){
+						length = 0;
 					} else {
 						length = 1;
 					}
 				}
+				
+				return length;
+			}
+			
+			pushStr(str, i) {
+				return this.content.slice(0, i) + str + this.content.slice(i);
 			}
 		}
 
 		//checks for readable keys
 		function keyDownTextField(evt) {
+
 			if (evt) {
 				var charCode = (evt.charCode) ? evt.charCode : evt.keyCode;
 				key = String.fromCharCode(charCode);
@@ -149,16 +168,10 @@
 		//checks for spacial keys
 		function specialEvents(evt) {
 			if (evt) {
-				/*var content = document.getElementById('content');
-				var myCursor = '<div id="cursor" class="blinking-cursor" style="border-color: blue;"></div>'
-				var i = content.innerHTML.indexOf(myCursor)*/
-
 				if (evt.keyCode == keyCodes['BACK_SPACE']) {
-					content.backspace;
+					content.backspace();
 				} else if(evt.keyCode == keyCodes['LEFT']) {
-					length = check_special_string(head);
-					tail.innerHTML = head.innerHTML.slice(-1*length) + tail.innerHTML;
-					backSpace(head, length);
+					content.leftPress();
 				} else if(evt.keyCode == keyCodes['RIGHT']) {
 					length = check_special_string(tail, false);
 					head.innerHTML += tail.innerHTML.slice(0, length);
@@ -198,6 +211,6 @@
 		}
 	</script>
 	<body onload='onLoad()'>
-		<div id='content' class='noblock'><div id='cursor' class='blinking-cursor'></div></div>
+		<div id='content' class='noblock'></div>
 	</body>
 </html>
