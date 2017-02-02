@@ -24,7 +24,7 @@
 				HOME:36
 			};
 
-			var cursor = new Cursor('blue');
+			cursor = new Cursor('blue');
 			content = new FileContent(cursor);
 			document.onkeypress = keyDownTextField;
 			document.onkeydown = specialEvents;
@@ -47,7 +47,7 @@
 				this.y = y;
 			}
 
-			get len() {
+			get getLen() {
 				return this.cursorDiv.length;
 			}
 			
@@ -89,6 +89,10 @@
 			get getContent() {
 				return this.content;
 			}
+			
+			get getLen() {
+				return this.content.length - this.cursor.getLen;
+			}
 
 			addKey(key) {
 				var i = this.content.indexOf(this.cursor.getCursorDiv);
@@ -104,16 +108,36 @@
 			leftPress() {
 				var i = this.content.indexOf(this.cursor.getCursorDiv);
 				var length = this.check_special_string(this.content.slice(0, i));
-				var tempStr = this.content.slice(i - length ,i);
-				console.log(tempStr);
-				this.content = this.pushStr(tempStr, i + this.cursor.len);
+				var tempStr = this.content.slice(i - length, i);
+				this.content = this.pushStr(tempStr, i + this.cursor.getLen);
 				this.backspace();
 			}
 			
+			rightPress() {
+				var i = this.content.indexOf(this.cursor.getCursorDiv) + this.cursor.getLen;
+				var length = this.check_special_string(this.content.slice(i), true);
+				var tempStr = this.content.slice(i, i + length);
+				this.content = this.content.slice(0, i) + this.content.slice(i + length);
+				this.content = this.pushStr(tempStr, i - this.cursor.getLen);
+			}
+			
+			//TODO
+			endPress() {
+				var i = this.content.indexOf(this.cursor.getCursorDiv) + this.cursor.getLen;
+				var brLoc = this.content.slice(i).indexOf('<br>');
+				if (brLoc == -1) {
+					this.content = this.content.slice(0, i - this.cursor.getLen) + this.content.slice(i) + this.cursor.getCursorDiv;
+				} else {
+					this.content = (this.content.slice(0, i - this.cursor.getLen)
+						+ this.content.slice(i, brLoc)
+						+ this.cursor.getCursorDiv
+						+ this.content.slice(brLoc));
+				}
+			}
 			//checks if innerHTML ends with something if end = true
 			//checks if innerHTML starts with something if end = false
-			check_special_string(content, end = true) {
-				if (end) {
+			check_special_string(content, checkStart = false) {
+				if (!checkStart) {
 					if (content.endsWith('&nbsp;')) {
 						length = '&nbsp;'.length;
 					} else if (content.endsWith('&amp;')) {
@@ -149,7 +173,6 @@
 
 		//checks for readable keys
 		function keyDownTextField(evt) {
-
 			if (evt) {
 				var charCode = (evt.charCode) ? evt.charCode : evt.keyCode;
 				key = String.fromCharCode(charCode);
@@ -173,25 +196,10 @@
 				} else if(evt.keyCode == keyCodes['LEFT']) {
 					content.leftPress();
 				} else if(evt.keyCode == keyCodes['RIGHT']) {
-					length = check_special_string(tail, false);
-					head.innerHTML += tail.innerHTML.slice(0, length);
-					tail.innerHTML = tail.innerHTML.substring(
-							length,
-							tail.innerHTML.length
-						);
+					content.rightPress();
 				}
 				else if(evt.keyCode == keyCodes['END']) {
-					loc = tail.innerHTML.indexOf('<br>');
-					if (loc == -1) {
-						head.innerHTML += tail.innerHTML;
-						tail.innerHTML = '';
-					} else {
-						head.innerHTML += tail.innerHTML.slice(0, loc);
-						tail.innerHTML = tail.innerHTML.substring(
-							loc,
-							tail.innerHTML.length
-						);
-					}
+					content.endPress();
 				} else if(evt.keyCode == keyCodes['HOME']) {
 					loc = head.innerHTML.lastIndexOf('<br>');
 					if (loc == -1) {
