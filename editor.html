@@ -41,7 +41,7 @@
 		*/
 		class Cursor {
 			constructor(color, id = 'cursor', x = 0, y = 0) {
-				this.cursorDiv = '<div id='+id+' class="blinking-cursor" style="border-color: '+color+';"></div>';
+				this.cursorDiv = '<div id=' + id + ' class="blinking-cursor" style="border-color: ' + color + ';"></div>';
 				this.id = id;
 				this.x = x;
 				this.y = y;
@@ -82,7 +82,7 @@
 		*/
 		class FileContent {
 			constructor(cursor) {
-				this.content = '' + cursor.getCursorDiv;
+				this.content = cursor.getCursorDiv;
 				this.cursor = cursor;
 			}
 
@@ -120,20 +120,35 @@
 				this.content = this.content.slice(0, i) + this.content.slice(i + length);
 				this.content = this.pushStr(tempStr, i - this.cursor.getLen);
 			}
-			
-			//TODO
+
 			endPress() {
-				var i = this.content.indexOf(this.cursor.getCursorDiv) + this.cursor.getLen;
+				var i = this.content.indexOf(this.cursor.getCursorDiv);
 				var brLoc = this.content.slice(i).indexOf('<br>');
 				if (brLoc == -1) {
-					this.content = this.content.slice(0, i - this.cursor.getLen) + this.content.slice(i) + this.cursor.getCursorDiv;
+					this.content = this.content.slice(0, i) + this.content.slice(i + this.cursor.getLen) + this.cursor.getCursorDiv;
 				} else {
-					this.content = (this.content.slice(0, i - this.cursor.getLen)
-						+ this.content.slice(i, brLoc)
+					brLoc += this.content.slice(0, i).length;
+					this.content = (this.content.slice(0, i)
+						+ this.content.slice(i + this.cursor.getLen, brLoc)
 						+ this.cursor.getCursorDiv
 						+ this.content.slice(brLoc));
 				}
 			}
+
+			homePress() {
+				var i = this.content.indexOf(this.cursor.getCursorDiv);
+				var brLoc = this.content.slice(0, i).lastIndexOf('<br>');
+				if (brLoc == -1) {
+					this.content = this.cursor.getCursorDiv + this.content.slice(0, i) + this.content.slice(i + this.cursor.getLen);
+				} else {
+					brLoc += '<br>'.length;
+					this.content = (this.content.slice(0, brLoc)
+						+ this.cursor.getCursorDiv
+						+ this.content.slice(brLoc, i)
+						+ this.content.slice(i + this.cursor.getLen));
+				}
+			}
+
 			//checks if innerHTML ends with something if end = true
 			//checks if innerHTML starts with something if end = false
 			check_special_string(content, checkStart = false) {
@@ -197,21 +212,10 @@
 					content.leftPress();
 				} else if(evt.keyCode == keyCodes['RIGHT']) {
 					content.rightPress();
-				}
-				else if(evt.keyCode == keyCodes['END']) {
+				} else if(evt.keyCode == keyCodes['END']) {
 					content.endPress();
 				} else if(evt.keyCode == keyCodes['HOME']) {
-					loc = head.innerHTML.lastIndexOf('<br>');
-					if (loc == -1) {
-						tail.innerHTML = head.innerHTML + tail.innerHTML;
-						head.innerHTML = '';
-					} else {
-						loc = head.innerHTML.length - loc - '<br>'.length;
-						if (loc != 0){
-							tail.innerHTML = head.innerHTML.slice(-1*loc) + tail.innerHTML;
-							backSpace(head, loc);
-						}
-					}
+					content.homePress();
 				}
 			}
 
