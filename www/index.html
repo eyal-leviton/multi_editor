@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <script src="script/model.js"></script>
+    <script src="script/view.js"></script>
+    <script src="script/controller.js"></script>
+    <script>
+      function onLoad() {
+        view = new View();
+        model = new Model();
+        controller = new Controller(view, model);
+      }
+    </script>
+    <style>
+      .cursor {
+  			border: 1px solid blue;
+  			display:inline;
+  		}
+    </style>
+  </head>
+  <body onload='onLoad()'>
+  </body>
+</html>

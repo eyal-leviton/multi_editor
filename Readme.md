@@ -23,7 +23,7 @@ Use <Shift><Left/Right Arrow> to mark, inject correct HTML tags.
 Workout the server side.
 The server will store the document content as one large HTML string.
 The cursor for each client will be based on random id taken from a cookie in the following format:
-<div id="cursor_<id>" style�>X</div>, this will also show the cursor, also give a random color for each id, so that each cursor will be in different color.
+'<div id="cursor_<id>" style�>X</div>', this will also show the cursor, also give a random color for each id, so that each cursor will be in different color.
 Moving the cursor will remove the div and put it in different location.
 Each modification of content, including cursor move, the client will send index, bytes that are going to be replaced and bytes that are being replaced.
 If server finds that bytes that are going to be replace differ at index+-10, it will reject the update request and client will revert the change because of a conflict (ignore the cursor marker).
