@@ -5,12 +5,16 @@ class Model {
     this.cursor = 0;
   }
 
-  getContent () {
+  getLength() {
+    return this.content.length;
+  }
+
+  getContent() {
     return this.content.join("");
   }
 
   setChar(c) {
-    i = this.cursor;
+    var i = this.cursor;
 
     if (i > this.content.length){
       i = this.content.length;
@@ -39,11 +43,11 @@ class Model {
     this.cursor = i;
   }
 
-  getRightBreak(){
+  getRightBreak() {
     return this.content.indexOf("<br />", this.cursor);
   }
 
-  getLeftBreak(){
+  getLeftBreak() {
     return this.content.lastIndexOf("<br />", this.cursor);
   }
 

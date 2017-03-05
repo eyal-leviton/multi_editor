@@ -8,6 +8,9 @@
         view = new View();
         model = new Model();
         controller = new Controller(view, model);
+
+        document.onkeypress = controller.events;
+        document.onkeydown = controller.specialEvents;
       }
     </script>
     <style>
@@ -17,6 +20,5 @@
   		}
     </style>
   </head>
-  <body onload='onLoad()'>
-  </body>
+  <body onload='onLoad()'></body>
 </html>
