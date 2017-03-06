@@ -1,23 +1,23 @@
 class View {
 
   constructor() {
-    document.body.innerHTML = "<div id='content'></div>";
+    document.body.innerHTML = "<div id='content'><div id='cursor' class='cursor' style='border-color: blue;'></div></div>";
     this.content = document.getElementById("content");
-    this.cursor = 0;
   }
 
-  setContent(content) {
+  setContent(content, i) {
     this.content.innerHTML = content;
-    this.setCursor(this.cursor, true);
+    this.setCursor(i, true);
   }
 
   setCursor(i, changed=false) {
-    if(i != this.cursor || changed){
-      this.content.removeElement(document.getElementById("cursor"));
-      var cursorDiv = '<div id="cursor" class="cursor" style="border-color: blue;"></div>';
-      this.content = this.content.slice(0, i) + cursorDiv + this.content.slice(i);
-      this.cursor = i;
+    if(changed){
+      var element = document.getElementById('cursor');
+      if(element){
+        element.parentNode.removeChild(element);
+      }
+      var cursorDiv = "<div id='cursor' class='cursor' style='border-color: blue;'></div>";
+      this.content.innerHTML = this.content.innerHTML.slice(0, i) + cursorDiv + this.content.innerHTML.slice(i);
     }
   }
-
 }

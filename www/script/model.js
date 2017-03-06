@@ -20,7 +20,7 @@ class Model {
       i = this.content.length;
     }
 
-    this.content.splice(i, 0, c) = c;
+    this.content.splice(i, 0, c);
     this.cursor += 1;
   }
 
@@ -31,28 +31,34 @@ class Model {
     }
   }
 
-  getCursor () {
+  getCursor() {
     return this.cursor;
   }
 
   setCursor (i) {
     if (i > this.content.length){
       i = this.content.length;
+    } else if(i < 0) {
+      i = 0;
     }
 
     this.cursor = i;
   }
 
   getRightBreak() {
-    return this.content.indexOf("<br />", this.cursor);
+    return this.content.indexOf("<br>", this.cursor);
   }
 
   getLeftBreak() {
-    return this.content.lastIndexOf("<br />", this.cursor);
+    if(this.cursor != 0) {
+      return this.content.lastIndexOf("<br>", this.cursor - 1) + 1;
+    } else {
+      return -1;
+    }
   }
 
   // TODO: Move to contorller?
-  getIndex (i) {
+  getIndex(i) {
     if (i > this.content.length){
       i = this.content.length;
     }

@@ -9,8 +9,13 @@
         model = new Model();
         controller = new Controller(view, model);
 
-        document.onkeypress = controller.events;
-        document.onkeydown = controller.specialEvents;
+        document.onkeypress = function(e){
+    			controller.events(e);
+    		}
+
+        document.onkeydown = function(e){
+    			controller.specialEvents(e);
+    		}
       }
     </script>
     <style>

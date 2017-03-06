@@ -1,4 +1,5 @@
 class Controller {
+
   constructor(view, model) {
     this.view = view;
     this.model = model;
@@ -20,21 +21,33 @@ class Controller {
   //checks for readable keys
   events(evt) {
     if (evt) {
-      console.log(this.keyCodes)
       if (evt.charCode == this.keyCodes['ENTER']) {
-        this.model.setChar('<br />');
+        this.model.setChar('<br>');
       } else if (evt.charCode == this.keyCodes['SPACE']) {
         this.model.setChar('&nbsp;');
+      } else if (evt.charCode == '&'.charCodeAt(0)) {
+        this.model.setChar('&amp;');
+      } else if (evt.charCode == '<'.charCodeAt(0)) {
+        this.model.setChar('&lt;');
+      } else if (evt.charCode == '>'.charCodeAt(0)) {
+        this.model.setChar('&gt;');
+      } else if (evt.charCode == '"'.charCodeAt(0)) {
+        this.model.setChar('&quot;');
+      } else if (evt.charCode == '\''.charCodeAt(0)) {
+        this.model.setChar('&#039;');
       } else {
         this.model.setChar(String.fromCharCode(evt.charCode));
       }
     }
+
+    this.update();
   }
 
   //checks for spacial keys
   specialEvents(evt) {
     if (evt) {
       if (evt.keyCode == this.keyCodes['BACK_SPACE']) {
+        evt.preventDefault();
         this.backspace();
       } else if(evt.keyCode == this.keyCodes['LEFT']) {
         this.leftPress();
@@ -45,9 +58,16 @@ class Controller {
       } else if(evt.keyCode == this.keyCodes['HOME']) {
         this.homePress();
       } else if(evt.keyCode == this.keyCodes['TAB']) {
+        evt.preventDefault();
         this.tabPress();
       }
     }
+
+    this.update();
+  }
+
+  update() {
+    this.view.setContent(this.model.getContent(), this.model.getIndex(this.model.getCursor()));
   }
 
   backspace() {
@@ -64,8 +84,9 @@ class Controller {
 
   endPress() {
     var loc = this.model.getRightBreak();
+    console.log("end " + loc);
     if(loc == -1) {
-      this.model.setCursor(this.getLength());
+      this.model.setCursor(this.model.getLength());
     } else {
       this.model.setCursor(loc);
     }
