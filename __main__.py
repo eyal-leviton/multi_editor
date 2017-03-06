@@ -203,6 +203,10 @@ def run_prog(s, uri_parse):
     send_html(s, body=subprocess.check_output(to_run))
 
 
+def set_content(rest):
+    print rest
+
+
 def main():
     args = parse_args()
     basic = ''
@@ -303,6 +307,9 @@ def main():
 
                     elif uri_parse.path[-3:] == '.py':
                         run_prog(s, uri_parse)
+
+                    elif uri_parse.path == '/set':
+                        set_content(rest)
 
                     else:
                         with open(file_name, 'rb') as f:

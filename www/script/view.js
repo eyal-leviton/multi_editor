@@ -1,10 +1,12 @@
 class View {
 
   constructor() {
-    document.body.innerHTML = "<div id='content'><div id='cursor' class='cursor' style='border-color: blue;'></div></div>";
+    document.body.innerHTML = "<div id='content'>" +
+    "<div id='cursor' class='cursor' style='border-color: blue;'></div>" +
+    "</div>";
     this.content = document.getElementById("content");
   }
-
+  
   setContent(content, i) {
     this.content.innerHTML = content;
     this.setCursor(i, true);

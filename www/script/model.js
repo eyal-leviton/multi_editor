@@ -3,6 +3,8 @@ class Model {
   constructor() {
     this.content = [];
     this.cursor = 0;
+    this.parser = new DOMParser();
+    this.xhttp = new XMLHttpRequest();
   }
 
   getLength() {
@@ -21,6 +23,17 @@ class Model {
     }
 
     this.content.splice(i, 0, c);
+
+    var xmlDoc = this.parser.parseFromString("<root>alon</root>", "text/xml");
+    this.xhttp.onreadystatechange = function() {
+        if (this.readyState == this.DONE && this.status == 200) {
+            onReady(this);
+        }
+    };
+
+    this.xhttp.open("POST", "set", true);
+    this.xhttp.send(xmlDoc);
+
     this.cursor += 1;
   }
 

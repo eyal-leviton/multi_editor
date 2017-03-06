@@ -35,6 +35,8 @@ class Controller {
         this.model.setChar('&quot;');
       } else if (evt.charCode == '\''.charCodeAt(0)) {
         this.model.setChar('&#039;');
+      } else if (evt.charCode == '\\'.charCodeAt(0)) {
+        this.model.setChar('&#92;');
       } else {
         this.model.setChar(String.fromCharCode(evt.charCode));
       }
