@@ -24,7 +24,7 @@ class Model {
 
     this.content.splice(i, 0, c);
 
-    var xmlDoc = this.parser.parseFromString("<root>alon</root>", "text/xml");
+    var xmlDoc = this.parser.parseFromString("<root>alon</root>'\r\n'", "text/xml");
     this.xhttp.onreadystatechange = function() {
         if (this.readyState == this.DONE && this.status == 200) {
             onReady(this);
