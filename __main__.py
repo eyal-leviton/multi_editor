@@ -187,42 +187,44 @@ def main():
                             content += buf
                             left_to_read -= len(buf)
 
-                    print content
+                    if uri == '/set':
+                        print content
 
-                    with open(file_name, 'rb') as f:
+                    else:
+                        with open(file_name, 'rb') as f:
 
-                        #
-                        # Send headers
-                        #
-                        util.send_all(
-                            s,
-                            (
+                            #
+                            # Send headers
+                            #
+                            util.send_all(
+                                s,
                                 (
-                                    '%s 200 OK\r\n'
-                                    'Content-Length: %s\r\n'
-                                    'Content-Type: %s\r\n'
-                                    '\r\n'
-                                ) % (
-                                    constants.HTTP_SIGNATURE,
-                                    os.fstat(f.fileno()).st_size,
-                                    MIME_MAPPING.get(
-                                        os.path.splitext(
-                                            file_name
-                                        )[1].lstrip('.'),
-                                        'application/octet-stream',
-                                    ),
-                                )
-                            ).encode('utf-8')
-                        )
+                                    (
+                                        '%s 200 OK\r\n'
+                                        'Content-Length: %s\r\n'
+                                        'Content-Type: %s\r\n'
+                                        '\r\n'
+                                    ) % (
+                                        constants.HTTP_SIGNATURE,
+                                        os.fstat(f.fileno()).st_size,
+                                        MIME_MAPPING.get(
+                                            os.path.splitext(
+                                                file_name
+                                            )[1].lstrip('.'),
+                                            'application/octet-stream',
+                                        ),
+                                    )
+                                ).encode('utf-8')
+                            )
 
-                        #
-                        # Send content
-                        #
-                        while True:
-                            buf = f.read(constants.BLOCK_SIZE)
-                            if not buf:
-                                break
-                            util.send_all(s, buf)
+                            #
+                            # Send content
+                            #
+                            while True:
+                                buf = f.read(constants.BLOCK_SIZE)
+                                if not buf:
+                                    break
+                                util.send_all(s, buf)
 
                 except IOError as e:
                     traceback.print_exc()
