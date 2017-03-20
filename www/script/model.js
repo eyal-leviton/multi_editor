@@ -26,13 +26,13 @@ class Model {
 
     this.xhttp.onreadystatechange = function() {
         if (this.readyState == this.DONE && this.status == 200) {
-            onReady(this);
+            console.log(this.responseText);
         }
     };
 
-    this.xhttp.open("POST", "set", true);
-    this.xhttp.send("hi");
-    console.log("hi");
+    this.xhttp.open("POST", "set", false);
+    this.xhttp.send(c);
+    console.log(c);
 
     this.cursor += 1;
   }

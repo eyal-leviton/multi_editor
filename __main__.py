@@ -189,6 +189,17 @@ def main():
 
                     if uri == '/set':
                         print content
+                        util.send_all(
+                            s,
+                            (
+                                (
+                                    '%s 200 OK\r\n'
+                                    '\r\n'
+                                ) % (
+                                    constants.HTTP_SIGNATURE,
+                                )
+                            ).encode('utf-8'),
+                        )
 
                     else:
                         with open(file_name, 'rb') as f:
