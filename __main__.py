@@ -24,6 +24,27 @@ MIME_MAPPING = {
 }
 
 
+class Content(object):
+    def __init__(self):
+        self.content = []
+
+    def get_content(self):
+        return ''.join(self.content)
+
+    def set_char(self, c, i):
+        if i >= 0 and i =< self.content.length:
+            self.content.insert(i, c)
+
+    def delete_char(self, i):
+        if i > 0 and i < self.content.length:
+            self.content.pop(i)
+
+
+class Cursor(object):
+    def __init__(self):
+        self.cursors = []
+
+
 def send_status(s, code, message, extra):
     util.send_all(
         s,
