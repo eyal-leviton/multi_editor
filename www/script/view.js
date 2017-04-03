@@ -6,9 +6,20 @@ class View {
     "</div>";
     this.content = document.getElementById("content");
   }
-  
+
+  loadXMLDoc() {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (xhttp.readyState === XMLHttpRequest.DONE && this.status == 200) {
+          document.getElementById("content").innerHTML = xhttp.responseText;
+        }
+      };
+      xhttp.open("GET", "content", false);
+      xhttp.send();
+    }
+
   setContent(content, i) {
-    this.content.innerHTML = content;
+    this.loadXMLDoc()
     this.setCursor(i, true);
   }
 

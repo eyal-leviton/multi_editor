@@ -40,9 +40,9 @@ class Controller {
       } else {
         this.model.setChar(String.fromCharCode(evt.charCode));
       }
-    }
 
-    this.update();
+      this.update();
+    }
   }
 
   //checks for spacial keys
@@ -63,9 +63,9 @@ class Controller {
         evt.preventDefault();
         this.tabPress();
       }
-    }
 
-    this.update();
+      this.update();
+    }
   }
 
   update() {
@@ -86,7 +86,6 @@ class Controller {
 
   endPress() {
     var loc = this.model.getRightBreak();
-    console.log("end " + loc);
     if(loc == -1) {
       this.model.setCursor(this.model.getLength());
     } else {

@@ -29,20 +29,54 @@ class Content(object):
         self.content = []
 
     def get_content(self):
-        return ''.join(self.content)
+        return ''.join(str(e) for e in self.content)
 
     def set_char(self, c, i):
-        if i >= 0 and i =< self.content.length:
+        if i >= 0 and i <= len(self.content):
             self.content.insert(i, c)
 
     def delete_char(self, i):
-        if i > 0 and i < self.content.length:
-            self.content.pop(i)
+        if i > 0 and i < len(self.content) + 1:
+            self.content.pop(i-1)
 
 
-class Cursor(object):
+class Cursors(object):
     def __init__(self):
-        self.cursors = []
+        self.cursors = {}
+        self.colors = [
+            'Blue',
+            'Brown',
+            'Orange',
+            'Red',
+            'Pink',
+            'Yellow',
+            'Black',
+            'Green',
+        ]
+        self.used_colors = []
+
+    def add_cursor(self, s):
+        if len(self.colors) == 0:
+            send_status(s, 403, 'Forbidden', 'server is full')
+        else:
+            self.cursors[s] = [
+                (
+                    '<div id="%s" '
+                    'class="cursor" '
+                    'style="border-color: %s;">'
+                    '</div>'
+                ) % (
+                    s,
+                    self.colors[0]
+                ),
+
+                0,
+            ]
+
+            self.used_colors.append(self.colors.pop(0))
+
+    def get_cursors(self):
+        return self.cursors
 
 
 def send_status(s, code, message, extra):
@@ -98,6 +132,8 @@ def parse_args():
 
 def main():
     args = parse_args()
+    content = Content()
+    cursors = Cursors()
 
     with contextlib.closing(
         socket.socket(
@@ -108,8 +144,12 @@ def main():
         sl.bind((args.bind_address, args.bind_port))
         sl.listen(10)
         while True:
-            s, addr = sl.accept()
-            with contextlib.closing(s):
+            sc, addr = sl.accept()
+
+            if sc not in cursors.get_cursors().keys():
+                cursors.add_cursor(sc)
+
+            for s in cursors.get_cursors().keys():
                 status_sent = False
                 try:
                     rest = bytearray()
@@ -135,13 +175,16 @@ def main():
                     # Be extra careful, it must not escape
                     # the base path.
                     #
-                    # NOTICE: os.path.commonprefix cannot be used, checkout:
+                    # NOTICE:
+                    # os.path.commonprefix cannot be used, checkout:
                     # os.path.commonprefix(('/a/b', '/a/b1'))
                     #
-                    # NOTICE: normpath does not remove leading '//', checkout:
+                    # NOTICE:
+                    # normpath does not remove leading '//', checkout:
                     # os.path.normpath('//a//b')
                     #
-                    # NOTICE: os.path.join does not consider 1st component if
+                    # NOTICE:
+                    # os.path.join does not consider 1st component if
                     # 2nd is absolute, checkout:
                     # os.path.join('a', '/b')
                     # os.path.join('a', 'c:/b')  [windows]
@@ -152,7 +195,8 @@ def main():
                     #
                     # URI must start with / in all operating systems.
                     # Reject DOS (\) based path components.
-                    # Normalize URI then append to base (which is normalized),
+                    # Normalize URI then append to base
+                    # (which is normalized),
                     # then normalize again to remove '//.
                     #
                     if not uri or uri[0] != '/' or '\\' in uri:
@@ -188,7 +232,7 @@ def main():
                     # to read response only after it finished sending
                     # content.
                     #
-                    content = ''
+                    received = ''
                     if headers['Content-Length'] is not None:
                         # Recv excacly what requested.
                         left_to_read = int(headers['Content-Length'])
@@ -205,11 +249,18 @@ def main():
                                 rest[:left_to_read],
                                 rest[left_to_read:],
                             )
-                            content += buf
+                            received += buf
                             left_to_read -= len(buf)
 
                     if uri == '/set':
-                        print content
+                        c, i = received.split('"')
+                        if c == '\b':
+                            print i
+                            content.delete_char(int(i))
+                        else:
+                            content.set_char(c, int(i))
+
+                        print content.get_content()
                         util.send_all(
                             s,
                             (
@@ -218,6 +269,23 @@ def main():
                                     '\r\n'
                                 ) % (
                                     constants.HTTP_SIGNATURE,
+                                )
+                            ).encode('utf-8'),
+                        )
+
+                    elif uri == '/content':
+                        print 'reached content'
+
+                        util.send_all(
+                            s,
+                            (
+                                (
+                                    '%s 200 OK\r\n'
+                                    '\r\n'
+                                    '%s'
+                                ) % (
+                                    constants.HTTP_SIGNATURE,
+                                    content.get_content(),
                                 )
                             ).encode('utf-8'),
                         )

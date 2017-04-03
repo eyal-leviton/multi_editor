@@ -24,15 +24,8 @@ class Model {
 
     this.content.splice(i, 0, c);
 
-    this.xhttp.onreadystatechange = function() {
-        if (this.readyState == this.DONE && this.status == 200) {
-            console.log(this.responseText);
-        }
-    };
-
     this.xhttp.open("POST", "set", false);
-    this.xhttp.send(c);
-    console.log(c);
+    this.xhttp.send(c + '"' + this.cursor.toString());
 
     this.cursor += 1;
   }
@@ -40,6 +33,10 @@ class Model {
   deleteChar() {
     if(this.cursor > 0){
       this.content.splice(this.cursor - 1, 1);
+
+      this.xhttp.open("POST", "set", false);
+      this.xhttp.send('\b' + '"' + this.cursor.toString());
+
       this.cursor -= 1;
     }
   }
