@@ -116,13 +116,13 @@ def parse_args():
     )
     parser.add_argument(
         '--bind-port',
-        default=constants.DEFAULT_HTTP_PORT,
+        default=8080,
         type=int,
         help='Bind port, default: %(default)s',
     )
     parser.add_argument(
         '--base',
-        default='.',
+        default='multi_editor/www',
         help='Base directory to search files in, default: %(default)s',
     )
     args = parser.parse_args()
@@ -144,12 +144,9 @@ def main():
         sl.bind((args.bind_address, args.bind_port))
         sl.listen(10)
         while True:
-            sc, addr = sl.accept()
+            s, addr = sl.accept()
 
-            if sc not in cursors.get_cursors().keys():
-                cursors.add_cursor(sc)
-
-            for s in cursors.get_cursors().keys():
+            with contextlib.closing(s):
                 status_sent = False
                 try:
                     rest = bytearray()
@@ -205,7 +202,7 @@ def main():
                     file_name = os.path.normpath(
                         '%s%s' % (
                             args.base,
-                            os.path.normpath(uri),
+                            os.path.normpath(str(uri)),
                         )
                     )
 

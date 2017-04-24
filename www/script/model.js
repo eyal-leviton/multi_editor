@@ -12,7 +12,7 @@ class Model {
   }
 
   getContent() {
-    return this.content.join("");
+    return this.content.join('');
   }
 
   setChar(c) {
@@ -24,7 +24,7 @@ class Model {
 
     this.content.splice(i, 0, c);
 
-    this.xhttp.open("POST", "set", false);
+    this.xhttp.open('POST', 'set', false);
     this.xhttp.send(c + '"' + this.cursor.toString());
 
     this.cursor += 1;
@@ -34,7 +34,7 @@ class Model {
     if(this.cursor > 0){
       this.content.splice(this.cursor - 1, 1);
 
-      this.xhttp.open("POST", "set", false);
+      this.xhttp.open('POST', 'set', false);
       this.xhttp.send('\b' + '"' + this.cursor.toString());
 
       this.cursor -= 1;
