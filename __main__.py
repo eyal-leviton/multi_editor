@@ -22,7 +22,11 @@ MIME_MAPPING = {
     'png': 'image/png',
     'txt': 'text/plain',
 }
+TIMEOUT = 0.05
 
+
+class DisconnectException(RuntimeError):
+    pass
 
 class Content(object):
     def __init__(self):
@@ -58,6 +62,8 @@ class Cursors(object):
     def add_cursor(self, s):
         if len(self.colors) == 0:
             send_status(s, 403, 'Forbidden', 'server is full')
+        elif s in self.cursors.keys():
+            pass
         else:
             self.cursors[s] = [
                 (
@@ -69,11 +75,13 @@ class Cursors(object):
                     s,
                     self.colors[0]
                 ),
-
                 0,
             ]
 
             self.used_colors.append(self.colors.pop(0))
+
+    def remove_cursor(self, s):
+        self.cursors.pop(s, None)
 
     def get_cursors(self):
         return self.cursors
@@ -142,12 +150,17 @@ def main():
         )
     ) as sl:
         sl.bind((args.bind_address, args.bind_port))
-        sl.listen(10)
+        sl.settimeout(10)
+        sl.listen(1)
         while True:
-            s, addr = sl.accept()
+            try:
+                s, addr = sl.accept()
+                cursors.add_cursor(s)
+            except socket.timeout:
+                pass
 
-            with contextlib.closing(s):
-                status_sent = False
+            status_sent = False
+            for s in cursors.get_cursors().keys():
                 try:
                     rest = bytearray()
 
@@ -167,35 +180,6 @@ def main():
                             "HTTP unsupported method '%s'" % method
                         )
 
-                    #
-                    # Create a file out of request uri.
-                    # Be extra careful, it must not escape
-                    # the base path.
-                    #
-                    # NOTICE:
-                    # os.path.commonprefix cannot be used, checkout:
-                    # os.path.commonprefix(('/a/b', '/a/b1'))
-                    #
-                    # NOTICE:
-                    # normpath does not remove leading '//', checkout:
-                    # os.path.normpath('//a//b')
-                    #
-                    # NOTICE:
-                    # os.path.join does not consider 1st component if
-                    # 2nd is absolute, checkout:
-                    # os.path.join('a', '/b')
-                    # os.path.join('a', 'c:/b')  [windows]
-                    # os.path.join('a', 'c:\\b') [windows]
-                    #
-                    # Each of these cases if not handled carefully enables
-                    # remote to escape the base path.
-                    #
-                    # URI must start with / in all operating systems.
-                    # Reject DOS (\) based path components.
-                    # Normalize URI then append to base
-                    # (which is normalized),
-                    # then normalize again to remove '//.
-                    #
                     if not uri or uri[0] != '/' or '\\' in uri:
                         raise RuntimeError("Invalid URI")
 
@@ -252,12 +236,10 @@ def main():
                     if uri == '/set':
                         c, i = received.split('"')
                         if c == '\b':
-                            print i
                             content.delete_char(int(i))
                         else:
                             content.set_char(c, int(i))
 
-                        print content.get_content()
                         util.send_all(
                             s,
                             (
@@ -271,7 +253,6 @@ def main():
                         )
 
                     elif uri == '/content':
-                        print 'reached content'
 
                         util.send_all(
                             s,
@@ -330,6 +311,10 @@ def main():
                             send_status(s, 404, 'File Not Found', e)
                         else:
                             send_status(s, 500, 'Internal Error', e)
+
+                except DisconnectException:
+                    cursors.remove_cursor(s)
+
                 except Exception as e:
                     traceback.print_exc()
                     if not status_sent:
