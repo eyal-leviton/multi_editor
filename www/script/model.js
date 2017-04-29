@@ -22,12 +22,14 @@ class Model {
       i = this.content.length;
     }
 
-    this.content.splice(i, 0, c);
-
     this.xhttp.open('POST', 'set', false);
     this.xhttp.send(c + '"' + this.cursor.toString());
 
     this.cursor += 1;
+  }
+
+  update(content) {
+    this.content  = content.split('\\');
   }
 
   deleteChar() {

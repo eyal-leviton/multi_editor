@@ -16,6 +16,16 @@
         document.onkeydown = function(e){
     			controller.specialEvents(e);
     		}
+
+        setInterval(
+          (function(self) {         //Self-executing func which takes 'this' as self
+            return function() {   //Return a function in the context of 'self'
+              controller.fetch(); //Thing you wanted to run as non-window 'this'
+            }
+          })(controller),
+          1000     //normal interval, 'this' scope not impacted here.
+        );
+
       }
     </script>
     <style>

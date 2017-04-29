@@ -19,7 +19,7 @@ class View {
     }
 
   setContent(content, i) {
-    this.loadXMLDoc()
+    this.content.innerHTML = content;
     this.setCursor(i, true);
   }
 

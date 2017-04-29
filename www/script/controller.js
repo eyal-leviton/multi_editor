@@ -4,6 +4,8 @@ class Controller {
     this.view = view;
     this.model = model;
 
+    this.version = 0;
+
     this.keyCodes = {
       BACK_SPACE:8,
       SPACE:32,
@@ -41,7 +43,7 @@ class Controller {
         this.model.setChar(String.fromCharCode(evt.charCode));
       }
 
-      this.update();
+      this.updateView();
     }
   }
 
@@ -64,11 +66,32 @@ class Controller {
         this.tabPress();
       }
 
-      this.update();
+      this.updateView();
     }
   }
 
-  update() {
+  fetch(){
+    var xhttp = new XMLHttpRequest();
+    var self = this;
+    xhttp.onreadystatechange = function() {
+      if (xhttp.readyState === XMLHttpRequest.DONE && this.status == 200) {
+        self.updateModel(xhttp.responseText)
+      }
+    };
+    xhttp.open("POST", "content", false);
+    xhttp.send(this.version.toString());
+  }
+
+  updateModel(data) {
+    var json = JSON.parse(data);
+    if (json.changed) {
+      this.version = json.version;
+      this.model.update(json.content);
+      this.updateView()
+    }
+  }
+
+  updateView() {
     this.view.setContent(this.model.getContent(), this.model.getIndex(this.model.getCursor()));
   }
 

@@ -4,6 +4,7 @@ import base64
 import contextlib
 import Cookie
 import errno
+import json
 import os
 import random
 import socket
@@ -25,23 +26,31 @@ MIME_MAPPING = {
 TIMEOUT = 0.05
 
 
-class DisconnectException(RuntimeError):
-    pass
-
 class Content(object):
     def __init__(self):
+        self.version = 0
         self.content = []
 
-    def get_content(self):
-        return ''.join(str(e) for e in self.content)
+    def get_content(self, version):
+        response = {
+            'changed': False,
+            'version': self.version,
+            'content': None,
+        }
+        if self.version > version:
+            response['content'] = '\\'.join(str(e) for e in self.content)
+            response['changed'] = True
+        return json.dumps(response)
 
     def set_char(self, c, i):
         if i >= 0 and i <= len(self.content):
             self.content.insert(i, c)
+            self.version += 1
 
     def delete_char(self, i):
         if i > 0 and i < len(self.content) + 1:
             self.content.pop(i-1)
+            self.version += 1
 
 
 class Cursors(object):
@@ -150,17 +159,11 @@ def main():
         )
     ) as sl:
         sl.bind((args.bind_address, args.bind_port))
-        sl.settimeout(10)
-        sl.listen(1)
+        sl.listen(10)
         while True:
-            try:
-                s, addr = sl.accept()
-                cursors.add_cursor(s)
-            except socket.timeout:
-                pass
-
-            status_sent = False
-            for s in cursors.get_cursors().keys():
+            s, addr = sl.accept()
+            with contextlib.closing(s):
+                status_sent = False
                 try:
                     rest = bytearray()
 
@@ -253,7 +256,7 @@ def main():
                         )
 
                     elif uri == '/content':
-
+                        version = int(received)
                         util.send_all(
                             s,
                             (
@@ -263,7 +266,7 @@ def main():
                                     '%s'
                                 ) % (
                                     constants.HTTP_SIGNATURE,
-                                    content.get_content(),
+                                    content.get_content(version),
                                 )
                             ).encode('utf-8'),
                         )
@@ -312,8 +315,8 @@ def main():
                         else:
                             send_status(s, 500, 'Internal Error', e)
 
-                except DisconnectException:
-                    cursors.remove_cursor(s)
+                except util.DisconnectException:
+                    pass
 
                 except Exception as e:
                     traceback.print_exc()

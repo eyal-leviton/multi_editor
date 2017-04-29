@@ -4,6 +4,9 @@
 from . import constants
 
 
+class DisconnectException(RuntimeError):
+    pass
+
 # python-3 woodo
 try:
     # try python-2 module name
@@ -39,7 +42,7 @@ def recv_line(
 
         t = s.recv(block_size)
         if not t:
-            raise RuntimeError('Disconnect')
+            raise DisconnectException
         buf += t
 
     return buf[:n].decode('utf-8'), buf[n + len(constants.CRLF_BIN):]
