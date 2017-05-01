@@ -24,35 +24,38 @@ class Controller {
   events(evt) {
     if (evt) {
       if (evt.charCode == this.keyCodes['ENTER']) {
-        this.model.setChar('<br>');
+        this.fetch('<br>');
       } else if (evt.charCode == this.keyCodes['SPACE']) {
-        this.model.setChar('&nbsp;');
+        this.fetch('&nbsp;');
       } else if (evt.charCode == '&'.charCodeAt(0)) {
-        this.model.setChar('&amp;');
+        this.fetch('&amp;');
       } else if (evt.charCode == '<'.charCodeAt(0)) {
-        this.model.setChar('&lt;');
+        this.fetch('&lt;');
       } else if (evt.charCode == '>'.charCodeAt(0)) {
-        this.model.setChar('&gt;');
+        this.fetch('&gt;');
       } else if (evt.charCode == '"'.charCodeAt(0)) {
-        this.model.setChar('&quot;');
+        this.fetch('&quot;');
       } else if (evt.charCode == '\''.charCodeAt(0)) {
-        this.model.setChar('&#039;');
+        this.fetch('&#039;');
       } else if (evt.charCode == '\\'.charCodeAt(0)) {
-        this.model.setChar('&#92;');
+        this.fetch('&#92;');
       } else {
-        this.model.setChar(String.fromCharCode(evt.charCode));
+        this.fetch(String.fromCharCode(evt.charCode));
       }
 
-      this.updateView();
+      //this.updateView();
     }
   }
 
   //checks for spacial keys
   specialEvents(evt) {
     if (evt) {
+      var should_update = true;
       if (evt.keyCode == this.keyCodes['BACK_SPACE']) {
         evt.preventDefault();
-        this.backspace();
+        //this.backspace();
+        this.fetch('\b')
+        should_update = false;
       } else if(evt.keyCode == this.keyCodes['LEFT']) {
         this.leftPress();
       } else if(evt.keyCode == this.keyCodes['RIGHT']) {
@@ -63,14 +66,27 @@ class Controller {
         this.homePress();
       } else if(evt.keyCode == this.keyCodes['TAB']) {
         evt.preventDefault();
-        this.tabPress();
+        this.fetch('&nbsp;&nbsp;&nbsp;&nbsp;');
+      } else {
+        should_update = false;
       }
 
-      this.updateView();
+      if (should_update) {
+        this.updateView();
+      }
     }
   }
 
-  fetch(){
+  fetch(c){
+    if (c == '\b') {
+      var str = this.model.deleteChar();
+      if (str == '') {
+        return
+      }
+    } else {
+      var str = this.model.setChar(c);
+    }
+
     var xhttp = new XMLHttpRequest();
     var self = this;
     xhttp.onreadystatechange = function() {
@@ -78,8 +94,8 @@ class Controller {
         self.updateModel(xhttp.responseText)
       }
     };
-    xhttp.open("POST", "content", false);
-    xhttp.send(this.version.toString());
+    xhttp.open("POST", "set", true);
+    xhttp.send(str + '"' + this.version.toString());
   }
 
   updateModel(data) {

@@ -1,9 +1,6 @@
 class View {
 
   constructor() {
-    document.body.innerHTML = "<div id='content'>" +
-    "<div id='cursor' class='cursor' style='border-color: blue;'></div>" +
-    "</div>";
     this.content = document.getElementById("content");
   }
 
@@ -29,8 +26,7 @@ class View {
       if(element){
         element.parentNode.removeChild(element);
       }
-      var cursorDiv = "" +
-      "<div id='cursor' class='cursor' style='border-color: blue;'></div>";
+      var cursorDiv = "<div id='cursor' class='cursor' style='border-color: blue;'></div>";
       this.content.innerHTML = this.content.innerHTML.slice(0, i) + cursorDiv +
       this.content.innerHTML.slice(i);
     }

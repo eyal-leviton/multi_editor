@@ -17,15 +17,18 @@ class Model {
 
   setChar(c) {
     var i = this.cursor;
+    var str = '';
 
     if (i > this.content.length){
       i = this.content.length;
     }
 
-    this.xhttp.open('POST', 'set', false);
-    this.xhttp.send(c + '"' + this.cursor.toString());
+    /*this.xhttp.open('POST', 'set', false);
+    this.xhttp.send(c + '"' + this.cursor.toString());*/
+    str = c + '"' + this.cursor.toString();
 
     this.cursor += 1;
+    return str;
   }
 
   update(content) {
@@ -33,14 +36,19 @@ class Model {
   }
 
   deleteChar() {
+    var str = ''
     if(this.cursor > 0){
       this.content.splice(this.cursor - 1, 1);
 
-      this.xhttp.open('POST', 'set', false);
-      this.xhttp.send('\b' + '"' + this.cursor.toString());
+      /*this.xhttp.open('POST', 'set', false);
+      this.xhttp.send('\b' + '"' + this.cursor.toString());*/
+
+      str = '\b' + '"' + this.cursor.toString()
 
       this.cursor -= 1;
     }
+
+    return str
   }
 
   getCursor() {
