@@ -1,5 +1,6 @@
 <html>
   <head>
+    <title>Multi Editor</title>
     <script src="script/model.js"></script>
     <script src="script/view.js"></script>
     <script src="script/controller.js"></script>
@@ -25,7 +26,6 @@
           })(controller),
           500     //normal interval, 'this' scope not impacted here.
         );
-
       }
     </script>
     <style>
@@ -36,6 +36,9 @@
     </style>
   </head>
   <body onload='onLoad()'>
+    <button id="Bold" onclick="controller.boldButton()">Bold</button>
+    <button id="Underline" onclick="controller.underlineButton()">Underline</button>
+    <br><br>
     <div id='content'>
       <div id='cursor' class='cursor' style='border-color: blue;'></div>
     </div>

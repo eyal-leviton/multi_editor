@@ -3,6 +3,8 @@ class Controller {
   constructor(view, model) {
     this.view = view;
     this.model = model;
+    this.setBold = false;
+    this.setUnderline = false;
 
     this.version = 0;
 
@@ -50,12 +52,12 @@ class Controller {
   //checks for spacial keys
   specialEvents(evt) {
     if (evt) {
-      var should_update = true;
+      var shouldUpdate = true;
       if (evt.keyCode == this.keyCodes['BACK_SPACE']) {
         evt.preventDefault();
         //this.backspace();
         this.fetch('\b')
-        should_update = false;
+        shouldUpdate = false;
       } else if(evt.keyCode == this.keyCodes['LEFT']) {
         this.leftPress();
       } else if(evt.keyCode == this.keyCodes['RIGHT']) {
@@ -68,17 +70,17 @@ class Controller {
         evt.preventDefault();
         this.fetch('&nbsp;&nbsp;&nbsp;&nbsp;');
       } else {
-        should_update = false;
+        shouldUpdate = false;
       }
 
-      if (should_update) {
+      if (shouldUpdate) {
         this.updateView();
       }
     }
   }
 
   fetch(c = ''){
-    var should_set = true;
+    var shouldSet = true;
     var str = '"';
     if (c == '\b') {
       str = this.model.deleteChar();
@@ -88,7 +90,7 @@ class Controller {
     } else if(c != ''){
       str = this.model.setChar(c);
     } else {
-      should_set = false;
+      shouldSet = false;
     }
 
     var xhttp = new XMLHttpRequest();
@@ -99,7 +101,7 @@ class Controller {
       }
     };
 
-    if(should_set){
+    if(shouldSet){
       xhttp.open("POST", "set", true);
     } else {
       xhttp.open("POST", "content", true);
@@ -152,5 +154,15 @@ class Controller {
 
   tabPress() {
     this.model.setChar('&nbsp;&nbsp;&nbsp;&nbsp;');
+  }
+
+  boldButton() {
+    this.setBold = !this.setBold;
+    console.log(this.setBold);
+  }
+
+  underlineButton() {
+    this.setUnderline = !this.setUnderline;
+    console.log(this.setUnderline);
   }
 }
