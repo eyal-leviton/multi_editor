@@ -146,6 +146,43 @@ def parse_args():
     args.base = os.path.normpath(os.path.realpath(args.base))
     return args
 
+def set_uri(
+    s,
+    received,
+    content,
+):
+    c, i, version = received.split('"')
+    if c == '\b':
+        content.delete_char(int(i))
+    else:
+        content.set_char(c, int(i))
+
+    content_uri(
+        s,
+        received,
+        content,
+    )
+
+def content_uri(
+    s,
+    received,
+    content,
+):
+    c, i, version = received.split('"')
+    version = int(version)
+    util.send_all(
+        s,
+        (
+            (
+                '%s 200 OK\r\n'
+                '\r\n'
+                '%s'
+            ) % (
+                constants.HTTP_SIGNATURE,
+                content.get_content(version),
+            )
+        ).encode('utf-8'),
+    )
 
 def main():
     args = parse_args()
@@ -237,43 +274,17 @@ def main():
                             left_to_read -= len(buf)
 
                     if uri == '/set':
-                        print 'received:', received
-                        c, i, version = received.split('"')
-                        version = int(version)
-                        if c == '\b':
-                            content.delete_char(int(i))
-                        else:
-                            content.set_char(c, int(i))
-
-                        print 'content:', content.get_content(version)
-                        util.send_all(
+                        set_uri(
                             s,
-                            (
-                                (
-                                    '%s 200 OK\r\n'
-                                    '\r\n'
-                                    '%s'
-                                ) % (
-                                    constants.HTTP_SIGNATURE,
-                                    content.get_content(version),
-                                )
-                            ).encode('utf-8'),
+                            received,
+                            content,
                         )
 
                     elif uri == '/content':
-                        version = int(received)
-                        util.send_all(
+                        content_uri(
                             s,
-                            (
-                                (
-                                    '%s 200 OK\r\n'
-                                    '\r\n'
-                                    '%s'
-                                ) % (
-                                    constants.HTTP_SIGNATURE,
-                                    content.get_content(version),
-                                )
-                            ).encode('utf-8'),
+                            received,
+                            content,
                         )
 
                     else:

@@ -77,14 +77,18 @@ class Controller {
     }
   }
 
-  fetch(c){
+  fetch(c = ''){
+    var should_set = true;
+    var str = '"';
     if (c == '\b') {
-      var str = this.model.deleteChar();
+      str = this.model.deleteChar();
       if (str == '') {
-        return
+        return;
       }
+    } else if(c != ''){
+      str = this.model.setChar(c);
     } else {
-      var str = this.model.setChar(c);
+      should_set = false;
     }
 
     var xhttp = new XMLHttpRequest();
@@ -94,7 +98,12 @@ class Controller {
         self.updateModel(xhttp.responseText)
       }
     };
-    xhttp.open("POST", "set", true);
+
+    if(should_set){
+      xhttp.open("POST", "set", true);
+    } else {
+      xhttp.open("POST", "content", true);
+    }
     xhttp.send(str + '"' + this.version.toString());
   }
 

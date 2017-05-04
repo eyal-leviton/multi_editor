@@ -23,8 +23,6 @@ class Model {
       i = this.content.length;
     }
 
-    /*this.xhttp.open('POST', 'set', false);
-    this.xhttp.send(c + '"' + this.cursor.toString());*/
     str = c + '"' + this.cursor.toString();
 
     this.cursor += 1;
@@ -39,9 +37,6 @@ class Model {
     var str = ''
     if(this.cursor > 0){
       this.content.splice(this.cursor - 1, 1);
-
-      /*this.xhttp.open('POST', 'set', false);
-      this.xhttp.send('\b' + '"' + this.cursor.toString());*/
 
       str = '\b' + '"' + this.cursor.toString()
 

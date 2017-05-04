@@ -17,14 +17,14 @@
     			controller.specialEvents(e);
     		}
 
-        /*setInterval(
+        setInterval(
           (function(self) {         //Self-executing func which takes 'this' as self
             return function() {   //Return a function in the context of 'self'
               controller.fetch(); //Thing you wanted to run as non-window 'this'
             }
           })(controller),
-          10000     //normal interval, 'this' scope not impacted here.
-        );*/
+          500     //normal interval, 'this' scope not impacted here.
+        );
 
       }
     </script>
