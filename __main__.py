@@ -38,12 +38,12 @@ class Content(object):
             'content': None,
         }
         if self.version > version:
-            response['content'] = '\\'.join(str(e) for e in self.content)
+            response['content'] = '&'.join(str(e) for e in self.content)
             response['changed'] = True
         return json.dumps(response)
 
     def set_char(self, c, i):
-        if i >= 0 and i <= len(self.content):
+        if i >= 0 and i <= len(self.content) + 1:
             self.content.insert(i, c)
             self.version += 1
 
@@ -170,6 +170,7 @@ def content_uri(
 ):
     c, i, version = received.split('"')
     version = int(version)
+    print content.get_content(version)
     util.send_all(
         s,
         (

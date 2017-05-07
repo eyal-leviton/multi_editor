@@ -17,13 +17,14 @@ class View {
 
   setContent(content, i) {
     this.content.innerHTML = content;
+    console.log(content)
     this.setCursor(i, true);
   }
 
   setCursor(i, changed=false) {
-    if(changed){
+    if(changed) {
       var element = document.getElementById('cursor');
-      if(element){
+      if(element) {
         element.parentNode.removeChild(element);
       }
       var cursorDiv = "<div id='cursor' class='cursor' style='border-color: blue;'></div>";

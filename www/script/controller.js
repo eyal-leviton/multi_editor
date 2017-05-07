@@ -3,6 +3,7 @@ class Controller {
   constructor(view, model) {
     this.view = view;
     this.model = model;
+
     this.setBold = false;
     this.setUnderline = false;
 
@@ -44,8 +45,6 @@ class Controller {
       } else {
         this.fetch(String.fromCharCode(evt.charCode));
       }
-
-      //this.updateView();
     }
   }
 
@@ -55,7 +54,6 @@ class Controller {
       var shouldUpdate = true;
       if (evt.keyCode == this.keyCodes['BACK_SPACE']) {
         evt.preventDefault();
-        //this.backspace();
         this.fetch('\b')
         shouldUpdate = false;
       } else if(evt.keyCode == this.keyCodes['LEFT']) {
@@ -79,7 +77,7 @@ class Controller {
     }
   }
 
-  fetch(c = ''){
+  fetch(c = '', isDiv = false){
     var shouldSet = true;
     var str = '"';
     if (c == '\b') {
@@ -87,8 +85,8 @@ class Controller {
       if (str == '') {
         return;
       }
-    } else if(c != ''){
-      str = this.model.setChar(c);
+    } else if(c != '') {
+      str = this.model.setChar(c, isDiv);
     } else {
       shouldSet = false;
     }
@@ -127,11 +125,11 @@ class Controller {
   }
 
   leftPress() {
-    this.model.setCursor(this.model.getCursor() - 1);
+    this.model.setCursor(this.model.getCursor() - 1, true);
   }
 
   rightPress() {
-    this.model.setCursor(this.model.getCursor() + 1);
+    this.model.setCursor(this.model.getCursor() + 1, false);
   }
 
   endPress() {
@@ -158,11 +156,12 @@ class Controller {
 
   boldButton() {
     this.setBold = !this.setBold;
-    console.log(this.setBold);
+
+    //this.fetch('<\\div>', true)
+    this.fetch("<div style='font-weight:bold'>")
   }
 
   underlineButton() {
     this.setUnderline = !this.setUnderline;
-    console.log(this.setUnderline);
   }
 }

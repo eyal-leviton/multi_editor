@@ -15,22 +15,25 @@ class Model {
     return this.content.join('');
   }
 
-  setChar(c) {
+  setChar(c, isDiv) {
     var i = this.cursor;
     var str = '';
 
-    if (i > this.content.length){
+    if (i > this.content.length) {
       i = this.content.length;
     }
 
     str = c + '"' + this.cursor.toString();
 
-    this.cursor += 1;
+    if (!isDiv) {
+      this.cursor += 1;
+    }
+
     return str;
   }
 
   update(content) {
-    this.content  = content.split('\\');
+    this.content  = content.split('&');
   }
 
   deleteChar() {
@@ -50,11 +53,19 @@ class Model {
     return this.cursor;
   }
 
-  setCursor (i) {
-    if (i > this.content.length){
+  setCursor (i, isLeftPress) {
+    if (i >= this.content.length){
       i = this.content.length;
     } else if(i < 0) {
       i = 0;
+    } else {
+      while ((this.content[i].startsWith('<')) && (!this.content[i].startsWith('<\\'))) {
+        if (isLeftPress) {
+          i--;
+        } else {
+          i++;
+        }
+      }
     }
 
     this.cursor = i;
