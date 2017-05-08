@@ -38,7 +38,7 @@ class Content(object):
             'content': None,
         }
         if self.version > version:
-            response['content'] = '&'.join(str(e) for e in self.content)
+            response['content'] = "<sep>".join(str(e) for e in self.content)
             response['changed'] = True
         return json.dumps(response)
 
@@ -168,6 +168,7 @@ def content_uri(
     received,
     content,
 ):
+    print received
     c, i, version = received.split('"')
     version = int(version)
     print content.get_content(version)

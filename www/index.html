@@ -33,11 +33,24 @@
   			border: 1px solid blue;
   			display:inline;
   		}
+      .button {
+        background-color: green;
+        border: none;
+        color: white;
+        padding: 5px 15px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+    }
     </style>
   </head>
   <body onload='onLoad()'>
-    <button id="Bold" onclick="controller.boldButton()">Bold</button>
-    <button id="Underline" onclick="controller.underlineButton()">Underline</button>
+    <button id="image" class="button" onclick="controller.imageButtom()">add image</button>
+    <button id="Bold" class="button" onclick="controller.boldButton()">Bold</button>
+    <button id="Underline" class="button" onclick="controller.underlineButton()">Underline</button>
     <br><br>
     <div id='content'>
       <div id='cursor' class='cursor' style='border-color: blue;'></div>

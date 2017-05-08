@@ -27,6 +27,7 @@ class Controller {
   events(evt) {
     if (evt) {
       if (evt.charCode == this.keyCodes['ENTER']) {
+        evt.preventDefault();
         this.fetch('<br>');
       } else if (evt.charCode == this.keyCodes['SPACE']) {
         this.fetch('&nbsp;');
@@ -77,7 +78,7 @@ class Controller {
     }
   }
 
-  fetch(c = '', isDiv = false){
+  fetch(c = ''){
     var shouldSet = true;
     var str = '"';
     if (c == '\b') {
@@ -86,7 +87,7 @@ class Controller {
         return;
       }
     } else if(c != '') {
-      str = this.model.setChar(c, isDiv);
+      str = this.model.setChar(c);
     } else {
       shouldSet = false;
     }
@@ -125,11 +126,11 @@ class Controller {
   }
 
   leftPress() {
-    this.model.setCursor(this.model.getCursor() - 1, true);
+    this.model.setCursor(this.model.getCursor() - 1);
   }
 
   rightPress() {
-    this.model.setCursor(this.model.getCursor() + 1, false);
+    this.model.setCursor(this.model.getCursor() + 1);
   }
 
   endPress() {
@@ -157,11 +158,37 @@ class Controller {
   boldButton() {
     this.setBold = !this.setBold;
 
-    //this.fetch('<\\div>', true)
-    this.fetch("<div style='font-weight:bold'>")
+    if(this.setBold) {
+      document.getElementById('Bold').style.backgroundColor = 'blue';
+      this.fetch("<span style='font-weight:bold'>");
+    } else {
+      document.getElementById('Bold').style.backgroundColor = 'green';
+      this.fetch("</span>");
+    }
   }
 
   underlineButton() {
     this.setUnderline = !this.setUnderline;
+  }
+
+  imageButtom() {
+    var image_url = prompt("place image url here:");
+
+    if (image_url != null && image_url != "") {
+      if (this.imageExists(image_url)) {
+        this.fetch('<img src=' + image_url + '>');
+      } else {
+        alert('image was not found')
+      }
+    }
+  }
+
+  imageExists(image_url) {
+    var http = new XMLHttpRequest();
+
+    http.open('HEAD', image_url, false);
+    http.send();
+
+    return http.status == 200;
   }
 }
