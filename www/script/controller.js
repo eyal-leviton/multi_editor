@@ -4,9 +4,6 @@ class Controller {
     this.view = view;
     this.model = model;
 
-    this.setBold = false;
-    this.setUnderline = false;
-
     this.version = 0;
 
     this.keyCodes = {
@@ -156,19 +153,25 @@ class Controller {
   }
 
   boldButton() {
-    this.setBold = !this.setBold;
+    /*this.model.setBoldState(!this.model.getBoldState());
 
     if(this.setBold) {
       document.getElementById('Bold').style.backgroundColor = 'blue';
       this.fetch("<span style='font-weight:bold'>");
+      this.fetch("</span>");
+      this.leftPress()
     } else {
       document.getElementById('Bold').style.backgroundColor = 'green';
       this.fetch("</span>");
+    }*/
+    var selectedText = this.getSelectedText();
+    if (selectedText) {
+      alert("Got selected text " + selectedText);
     }
   }
 
   underlineButton() {
-    this.setUnderline = !this.setUnderline;
+    this.model.setUnderlineState(!this.model.getUnderlinetate());
   }
 
   imageButtom() {
@@ -191,4 +194,15 @@ class Controller {
 
     return http.status == 200;
   }
+
+  getSelectedText() {
+    var text = "";
+    if (typeof window.getSelection != "undefined") {
+      text = window.getSelection().toString();
+    } else if (typeof document.selection != "undefined" && document.selection.type == "Text") {
+      text = document.selection.createRange().text;
+    }
+    return text;
+  }
+
 }

@@ -5,6 +5,9 @@ class Model {
     this.cursor = 0;
     this.parser = new DOMParser();
     this.xhttp = new XMLHttpRequest();
+
+    this.setBold = false;
+    this.setUnderline = false;
   }
 
   getLength() {
@@ -13,6 +16,26 @@ class Model {
 
   getContent() {
     return this.content.join('');
+  }
+
+  getBoldState() {
+    return this.setBold;
+  }
+
+  setBoldState(state) {
+    this.setBold = state;
+  }
+
+  getUnderlineState() {
+    return this.setUnderline;
+  }
+
+  setUnderlinetate(state) {
+    this.setUnderline = state;
+  }
+
+  update(content) {
+    this.content  = content.split("<sep>");
   }
 
   setChar(c) {
@@ -30,13 +53,9 @@ class Model {
     return str;
   }
 
-  update(content) {
-    this.content  = content.split("<sep>");
-  }
-
   deleteChar() {
     var str = ''
-    if(this.cursor > 0){
+    if(this.cursor > 0) {
       this.content.splice(this.cursor - 1, 1);
 
       str = '\b' + '"' + this.cursor.toString()
@@ -56,6 +75,30 @@ class Model {
       i = this.content.length;
     } else if(i < 0) {
       i = 0;
+    }
+
+    var changed = false;
+
+    while(this.content[i] != null && this.content[i].startsWith("<span")) {
+      if(i > this.cursor) {
+        i++;
+      } else {
+        i--;
+      }
+
+      changed = true;
+    }
+
+    if (!changed) {
+      while(this.content[i] != null && this.content[i].startsWith("</span>")) {
+        if(i > this.cursor) {
+          i++;
+        } else {
+          i--;
+        }
+
+        changed = true;
+      }
     }
 
     this.cursor = i;

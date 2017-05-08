@@ -1,16 +1,10 @@
 # -*- coding: utf-8 -*-
 import argparse
-import base64
 import contextlib
-import Cookie
 import errno
 import json
 import os
-import random
 import socket
-import subprocess
-import sys
-import time
 import traceback
 import urlparse
 
@@ -146,6 +140,7 @@ def parse_args():
     args.base = os.path.normpath(os.path.realpath(args.base))
     return args
 
+
 def set_uri(
     s,
     received,
@@ -162,6 +157,7 @@ def set_uri(
         received,
         content,
     )
+
 
 def content_uri(
     s,
@@ -185,6 +181,7 @@ def content_uri(
             )
         ).encode('utf-8'),
     )
+
 
 def main():
     args = parse_args()

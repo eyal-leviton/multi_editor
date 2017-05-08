@@ -21,6 +21,7 @@ class View {
     if(element) {
       element.parentNode.removeChild(element);
     }
+
     var cursorDiv = "<div id='cursor' class='cursor' style='border-color: blue;'></div>";
     content = content.slice(0, i) + cursorDiv + content.slice(i);
 
