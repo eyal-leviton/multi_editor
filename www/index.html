@@ -1,0 +1,76 @@
+<html>
+  <head>
+    <title>Multi Editor</title>
+    <script src="script/model.js"></script>
+    <script src="script/view.js"></script>
+    <script src="script/controller.js"></script>
+    <script>
+      function onLoad() {
+        view = new View();
+        model = new Model();
+        controller = new Controller(view, model);
+		var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+		var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+
+		if (isChrome) {
+			// readable key strokes
+			document.onkeypress = function(e){
+				controller.events(e);
+			}
+
+			// special key strokes
+			document.onkeydown = function(e){
+				controller.specialEvents(e);
+			}
+		} else if (isFirefox) {
+			document.onkeypress = function(e){
+				controller.fireFoxEvents(e);
+			}
+		}
+
+        /**
+        * Function setInterval
+        * set interval in a constant amount of time (0.5 seconds) to check if
+        * content on server has changed
+        */
+        setInterval(
+          (function(self) {
+            return function() {
+              controller.fetch();
+            }
+          })(controller),
+          500     // interval timer
+        );
+      }
+    </script>
+    <style>
+      .cursor {
+  			border: 1px solid blue;
+  			display:inline;
+  		}
+      .button {
+        background-color: green;
+        border: none;
+        color: white;
+        padding: 5px 15px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+    }
+    </style>
+  </head>
+  <body onload='onLoad()'>
+    <button id="BOLD" class="button" onclick="controller.boldButton()">Bold</button>
+    <button id="UNDERLINE" class="button" onclick="controller.underlineButton()">Underline</button>
+    <button id="RED" class="button" onclick="controller.redButton()">red</button>
+    <button id="GREEN" class="button" onclick="controller.greenButton()">green</button>
+    <button id="BLUE" class="button" onclick="controller.blueButton()">blue</button>
+    <br><br>
+    <div id='content'>
+      <div id='cursor' class='cursor' style='border-color: blue;'></div>
+    </div>
+  </body>
+</html>

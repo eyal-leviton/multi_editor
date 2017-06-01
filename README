@@ -1,0 +1,33 @@
+MULTI EDITOR SERVER
+=========================
+
+EXECUTION
+---------
+
+> - Windows
+
+By being in specific directory:
+
+> cd [location of multi_editor parent]
+> python -m multi_editor [args]
+
+
+ENTERING SERVER
+---------------
+
+open tab in google chrome and write in ip addres:
+http://[ip of server]:[port of server]/index.html
+
+USAGE
+-----
+
+write with keyboard.
+arrows navigate cursor left and right.
+HOME and END buttons jump to start of line or end of line accordingly.
+delete characters written with backspace.
+
+special buttons:
+bold\underline\red\green\blue change text accordingly, cannot use more than one.
+feature at a time.
+when button is green the feature is off,
+when button is blue the feature is on.
