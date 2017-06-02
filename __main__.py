@@ -209,6 +209,9 @@ def main():
                     if not uri or uri[0] != '/' or '\\' in uri:
                         raise RuntimeError("Invalid URI")
 
+                    if uri == '/':
+                        uri = '/index.html'
+
                     file_name = os.path.normpath(
                         '%s%s' % (
                             args.base,
